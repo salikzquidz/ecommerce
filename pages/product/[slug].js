@@ -19,10 +19,11 @@ import db from "../../utils/db";
 import axios from "axios";
 
 import { Store } from "../../utils/Store"; // untuk add to cart
+import { useRouter } from "next/router";
 
 export default function ProductPage({ product }) {
   const classes = useStyles();
-
+  const router = useRouter();
   const { dispatch } = useContext(Store); // untuk add to cart
   const addToCartHandler = async () => {
     const { data } = await axios.get(`/api/products/${product._id}`);
@@ -31,6 +32,7 @@ export default function ProductPage({ product }) {
       return;
     }
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity: 1 } });
+    router.push("/cart");
   };
 
   return (

@@ -26,6 +26,7 @@ async function disconnect() {
       await mongoose.disconnect();
       connection.isConnected = false;
     } else {
+      // await mongoose.disconnect();
       console.log("not disconnected");
     }
   }
