@@ -21,7 +21,6 @@ import axios from "axios";
 import { Store } from "../../utils/Store"; // untuk add to cart
 
 export default function ProductPage({ product }) {
-  // const router = useRouter();
   const classes = useStyles();
 
   const { dispatch } = useContext(Store); // untuk add to cart

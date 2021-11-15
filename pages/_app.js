@@ -8,9 +8,6 @@ function MyApp({ Component, pageProps }) {
     if (jss) {
       jss.parentElement.removeChild(jss);
     }
-    // return () => {
-    //   cleanup;
-    // };
   }, []);
   return (
     <StoreProvider>
