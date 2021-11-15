@@ -44,3 +44,7 @@ In this simple project, I am going to build a simple Ecommerce application but n
 
 - Change document to JS object because there are some problems when serializing the Product
 - Import Cookies from js-cookie library to preserve dark mode and cart status
+
+Preview product page
+
+![alt text](https://raw.githubusercontent.com/salikzquidz/ecommerce/main/public/images/preview.png)
