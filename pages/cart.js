@@ -3,6 +3,7 @@ import NextLink from "next/link";
 import Layout from "../components/layout";
 import { Store } from "../utils/Store";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   Typography,
   Grid,
@@ -21,7 +22,7 @@ import {
   ListItem,
 } from "@material-ui/core";
 import axios from "axios";
-export default function CartScreen() {
+function CartScreen() {
   const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems },
@@ -43,8 +44,6 @@ export default function CartScreen() {
     <Layout title="Shopping Cart">
       <Typography variant="h1">Shopping Cart</Typography>
       {cartItems.length !== 0 ? (
-        // <div className="">
-        // {cartItems.length} items in your cart <br />
         <Grid container spacing={1}>
           <Grid item md={9} xs={12}>
             <TableContainer>
@@ -133,7 +132,6 @@ export default function CartScreen() {
           </Grid>
         </Grid>
       ) : (
-        // </div>
         <div>
           Cart is empty. Go <NextLink href="/">shopping!</NextLink>{" "}
         </div>
@@ -141,3 +139,5 @@ export default function CartScreen() {
     </Layout>
   );
 }
+
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });
