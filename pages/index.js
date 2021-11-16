@@ -3,10 +3,10 @@ import Image from "next/image";
 import NextLink from "next/link";
 import styles from "../styles/Home.module.css";
 import Layout from "../components/layout";
-
+import { useContext } from "react";
 import db from "../utils/db";
 import Product from "../models/Product";
-
+import { useRouter } from "next/router";
 import {
   Grid,
   Card,
@@ -17,8 +17,25 @@ import {
   CardActions,
   Button,
 } from "@material-ui/core";
-
+import axios from "axios";
+import { Store } from "../utils/Store";
 export default function Home({ products }) {
+  const router = useRouter();
+  const { state, dispatch } = useContext(Store); // untuk add to cart
+
+  const addToCartHandler = async (product) => {
+    const existItem = state.cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await axios.get(`/api/products/${product._id}`);
+    //kalau kurang stok jgn tambah
+    if (data.countInStock < 0) {
+      window.alert("Sorry, Product is out of stock");
+      return;
+    }
+    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
+    router.push("/cart");
+  };
+
   return (
     <Layout>
       <div>
@@ -43,7 +60,11 @@ export default function Home({ products }) {
                   </NextLink>
                   <CardActions>
                     <Typography>${product.price} </Typography>
-                    <Button size="small" color="primary">
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => addToCartHandler(product)}
+                    >
                       Add to cart
                     </Button>
                   </CardActions>

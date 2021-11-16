@@ -4,6 +4,8 @@ import Layout from "../components/layout";
 import { Store } from "../utils/Store";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import axios from "axios";
 import {
   Typography,
   Grid,
@@ -21,8 +23,9 @@ import {
   List,
   ListItem,
 } from "@material-ui/core";
-import axios from "axios";
+
 function CartScreen() {
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems },
@@ -40,10 +43,21 @@ function CartScreen() {
   const removeItemHandler = (item) => {
     dispatch({ type: "CART_REMOVE_ITEM", payload: item });
   };
+
+  const checkoutHandler = () => {
+    router.push("/shipping");
+  };
   return (
     <Layout title="Shopping Cart">
       <Typography variant="h1">Shopping Cart</Typography>
-      {cartItems.length !== 0 ? (
+      {cartItems.length === 0 ? (
+        <div>
+          Cart is empty.{" "}
+          <NextLink href="/" passHref>
+            <Link>Go shopping</Link>
+          </NextLink>
+        </div>
+      ) : (
         <Grid container spacing={1}>
           <Grid item md={9} xs={12}>
             <TableContainer>
@@ -61,7 +75,7 @@ function CartScreen() {
                   {cartItems.map((item) => (
                     <TableRow key={item._id}>
                       <TableCell>
-                        <NextLink href={`/product/${item.slug}`}>
+                        <NextLink href={`/product/${item.slug}`} passHref>
                           <Link>
                             <Image
                               src={item.image}
@@ -84,9 +98,9 @@ function CartScreen() {
                       <TableCell align="right">
                         <Select
                           value={item.quantity}
-                          onChange={(e) => {
-                            updateCartHandler(item, e.target.value);
-                          }}
+                          onChange={(e) =>
+                            updateCartHandler(item, e.target.value)
+                          }
                         >
                           {[...Array(item.countInStock).keys()].map((x) => (
                             <MenuItem key={x + 1} value={x + 1}>
@@ -101,7 +115,7 @@ function CartScreen() {
                         <Button
                           variant="contained"
                           color="secondary"
-                          onClick={removeItemHandler(item)}
+                          onClick={() => removeItemHandler(item)}
                         >
                           x
                         </Button>
@@ -131,10 +145,6 @@ function CartScreen() {
             </Card>
           </Grid>
         </Grid>
-      ) : (
-        <div>
-          Cart is empty. Go <NextLink href="/">shopping!</NextLink>{" "}
-        </div>
       )}
     </Layout>
   );
