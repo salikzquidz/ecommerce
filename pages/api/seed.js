@@ -2,10 +2,13 @@ import nextConnect from "next-connect";
 import db from "../../utils/db";
 import data from "../../utils/data";
 import Product from "../../models/Product";
+import User from "../../models/User";
 
 const handler = nextConnect();
 handler.get(async (req, res) => {
   await db.connect(); // connect to db
+  await User.deleteMany();
+  await User.insertMany(data.users);
   await Product.deleteMany();
   await Product.insertMany(data.products);
   await db.disconnect();
