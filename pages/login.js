@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import NextLink from "next/link";
-
+import Cookies from "js-cookie";
 import Layout from "../components/Layout";
 import {
   Typography,
@@ -12,11 +12,25 @@ import {
 } from "@material-ui/core";
 import useStyles from "../utils/styles";
 import axios from "axios";
+import { Store } from "../utils/Store";
+import { useRouter } from "next/router";
 export default function Login() {
   const classes = useStyles();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { state, dispatch } = useContext(Store);
+  const { userInfo } = state;
+
+  const router = useRouter();
+
+  const { redirect } = router.query; // contoh query : ?redirect=/whateverroute
+  useEffect(() => {
+    if (userInfo) {
+      router.push("/");
+    }
+  }, []);
   const submitHandler = async (e) => {
     e.preventDefault(0);
     try {
@@ -24,11 +38,16 @@ export default function Login() {
         email,
         password,
       });
-      alert("Success login");
+      // console.log(data);
+      dispatch({ type: "USER_LOGIN", payload: data });
+      Cookies.set("userInfo", data);
+      router.push(redirect || "/"); // if redirect is null, redirect user to homepage
+      // alert("Success login");
     } catch (error) {
-      alert(error.response.data ? error.response.data.message : error.message);
+      alert(error.response ? error.response.data.message : error.message);
     }
   };
+
   return (
     <Layout title="login">
       <form action="" className={classes.loginForm} onSubmit={submitHandler}>

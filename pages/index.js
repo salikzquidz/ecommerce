@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import NextLink from "next/link";
 import styles from "../styles/Home.module.css";
-import Layout from "../components/layout";
+import Layout from "../components/Layout";
 import { useContext } from "react";
 import db from "../utils/db";
 import Product from "../models/Product";
