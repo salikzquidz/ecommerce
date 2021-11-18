@@ -8,8 +8,9 @@ async function connect() {
   // console.log(mongoose.connections[0].states); // 0 - disconnected , 1 - connected, 2 - connecting, 3 - disconnecting, 99 - uninitialized
   // console.log(mongoose.connections.length);
 
-  console.log("connecting to " + mongoose.connections[0].client.s.url);
   if (mongoose.connections.length > 0) {
+    // this statement has some bug
+    // console.log("connecting to " + mongoose.connections[0].client.s.url);
     connection.isConnected = mongoose.connections[0].readyState;
     switch (connection.isConnected) {
       case 0:

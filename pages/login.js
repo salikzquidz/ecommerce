@@ -15,6 +15,7 @@ import axios from "axios";
 import { Store } from "../utils/Store";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
+import { useSnackbar } from "notistack";
 
 export default function Login() {
   const classes = useStyles();
@@ -25,6 +26,7 @@ export default function Login() {
     control,
     formState: { errors },
   } = useForm();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
@@ -44,18 +46,25 @@ export default function Login() {
   // no need to useState when using react-hook-form
   const submitHandler = async ({ email, password }) => {
     // e.preventDefault();
+    closeSnackbar();
     try {
+      // bug here, cannot post to this api
       const { data } = await axios.post("/api/users/login", {
         email,
         password,
       });
+      console.log("haloo");
       // console.log(data);
       dispatch({ type: "USER_LOGIN", payload: data });
       Cookies.set("userInfo", data);
       router.push(redirect || "/"); // if redirect is null, redirect user to homepage
       // alert("Success login");
     } catch (error) {
-      alert(error.response ? error.response.data.message : error.message);
+      console.log(error);
+      enqueueSnackbar(
+        error.response.data ? error.response.data.message : error.message,
+        { variant: "error" }
+      );
     }
   };
 
