@@ -39,6 +39,7 @@ export default function Register() {
     e.preventDefault(0);
     if (password !== confirmPassword) {
       alert("Password dont match");
+      return;
     }
     try {
       const { data } = await axios.post("/api/users/register", {
