@@ -15,14 +15,24 @@ import axios from "axios";
 import { Store } from "../utils/Store";
 import { useRouter } from "next/router";
 
+import { useSnackbar } from "notistack";
+import { useForm, Controller } from "react-hook-form";
+
 export default function Register() {
   const classes = useStyles();
 
-  const [name, setName] = useState("");
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  //   const [name, setName] = useState("");
+
+  //   const [email, setEmail] = useState("");
+  //   const [password, setPassword] = useState("");
+  //   const [confirmPassword, setConfirmPassword] = useState("");
 
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
@@ -35,10 +45,13 @@ export default function Register() {
       router.push("/");
     }
   }, []);
-  const submitHandler = async (e) => {
-    e.preventDefault(0);
+  const submitHandler = async ({ name, email, password, confirmPassword }) => {
+    // e.preventDefault();
+    closeSnackbar();
+
     if (password !== confirmPassword) {
-      alert("Password dont match");
+      enqueueSnackbar("Passwords don't match", { variant: "error" });
+      //   alert("Password dont match");
       return;
     }
     try {
@@ -53,57 +66,144 @@ export default function Register() {
       router.push(redirect || "/"); // if redirect is null, redirect user to homepage
       // alert("Success login");
     } catch (error) {
-      alert(error.response ? error.response.data.message : error.message);
+      enqueueSnackbar(
+        error.response.data ? error.response.data.message : error.message,
+        { variant: "error" }
+      );
+      //   alert(error.response ? error.response.data.message : error.message);
     }
   };
 
   return (
     <Layout title="Register">
-      <form action="" className={classes.loginForm} onSubmit={submitHandler}>
+      <form
+        action=""
+        className={classes.loginForm}
+        onSubmit={handleSubmit(submitHandler)}
+      >
         <Typography variant="h1">Register</Typography>
         <List>
           <ListItem>
-            <TextField
-              variant="outlined"
-              fullWidth
-              id="name"
-              label="Username"
-              inputProps={{ type: "text" }}
-              onChange={(e) => setName(e.target.value)}
-            ></TextField>
+            <Controller
+              name="name"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: true,
+                minLength: 5,
+              }}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  id="name"
+                  label="Username"
+                  inputProps={{ type: "text" }}
+                  {...field}
+                  error={Boolean(errors.name)}
+                  helperText={
+                    errors.name
+                      ? errors.name.type === "minLength"
+                        ? "Name length must be more than 5 characters"
+                        : "Name is required"
+                      : ""
+                  }
+                ></TextField>
+              )}
+            />
           </ListItem>
 
           <ListItem>
-            <TextField
-              variant="outlined"
-              fullWidth
-              id="email"
-              label="Email"
-              inputProps={{ type: "email" }}
-              onChange={(e) => setEmail(e.target.value)}
-            ></TextField>
+            <Controller
+              name="email"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: true,
+                pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$/,
+              }}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  id="email"
+                  label="Email"
+                  inputProps={{ type: "email" }}
+                  // onChange={(e) => setEmail(e.target.value)}
+                  {...field}
+                  error={Boolean(errors.email)}
+                  // double ternary operator
+                  helperText={
+                    errors.email
+                      ? errors.email.type === "pattern"
+                        ? "Email is not valid"
+                        : "Email is required"
+                      : ""
+                  }
+                ></TextField>
+              )}
+            />
           </ListItem>
 
           <ListItem>
-            <TextField
-              variant="outlined"
-              fullWidth
-              id="password"
-              label="Password"
-              inputProps={{ type: "password" }}
-              onChange={(e) => setPassword(e.target.value)}
-            ></TextField>
+            <Controller
+              name="password"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: true,
+                minLength: 6,
+              }}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  id="password"
+                  label="Password"
+                  inputProps={{ type: "password" }}
+                  // onChange={(e) => setPassword(e.target.value)}
+                  {...field}
+                  error={Boolean(errors.password)}
+                  helperText={
+                    errors.password
+                      ? errors.password.type === "minLength"
+                        ? "Password must be more than 5 characters"
+                        : "Password is required"
+                      : ""
+                  }
+                ></TextField>
+              )}
+            />
           </ListItem>
 
           <ListItem>
-            <TextField
-              variant="outlined"
-              fullWidth
-              id="confirmPassword"
-              label="Confirm Password"
-              inputProps={{ type: "password" }}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            ></TextField>
+            <Controller
+              name="confirmPassword"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: true,
+                minLength: 6,
+              }}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  id="confirmPassword"
+                  label="Confirm Password"
+                  inputProps={{ type: "password" }}
+                  {...field}
+                  error={Boolean(errors.confirmPassword)}
+                  helperText={
+                    errors.confirmPassword
+                      ? errors.confirmPassword.type === "minLength"
+                        ? "Confirm Password must be more than 5 characters"
+                        : "Confirm Password is required"
+                      : ""
+                  }
+                ></TextField>
+              )}
+            />
           </ListItem>
 
           <ListItem>
