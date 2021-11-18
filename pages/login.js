@@ -14,11 +14,20 @@ import useStyles from "../utils/styles";
 import axios from "axios";
 import { Store } from "../utils/Store";
 import { useRouter } from "next/router";
+import { useForm, Controller } from "react-hook-form";
+
 export default function Login() {
   const classes = useStyles();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // form validation
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
+
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
 
   const { state, dispatch } = useContext(Store);
   const { userInfo } = state;
@@ -31,8 +40,10 @@ export default function Login() {
       router.push("/");
     }
   }, []);
-  const submitHandler = async (e) => {
-    e.preventDefault(0);
+
+  // no need to useState when using react-hook-form
+  const submitHandler = async ({ email, password }) => {
+    // e.preventDefault();
     try {
       const { data } = await axios.post("/api/users/login", {
         email,
@@ -50,29 +61,74 @@ export default function Login() {
 
   return (
     <Layout title="login">
-      <form action="" className={classes.loginForm} onSubmit={submitHandler}>
+      <form
+        action=""
+        className={classes.loginForm}
+        onSubmit={handleSubmit(submitHandler)}
+      >
         <Typography variant="h1">Login</Typography>
         <List>
           <ListItem>
-            <TextField
-              variant="outlined"
-              fullWidth
-              id="email"
-              label="Email"
-              inputProps={{ type: "email" }}
-              onChange={(e) => setEmail(e.target.value)}
-            ></TextField>
+            <Controller
+              name="email"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: true,
+                pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$/,
+              }}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  id="email"
+                  label="Email"
+                  inputProps={{ type: "email" }}
+                  // onChange={(e) => setEmail(e.target.value)}
+                  {...field}
+                  error={Boolean(errors.email)}
+                  // double ternary operator
+                  helperText={
+                    errors.email
+                      ? errors.email.type === "pattern"
+                        ? "Email is not valid"
+                        : "Email is required"
+                      : ""
+                  }
+                ></TextField>
+              )}
+            />
           </ListItem>
 
           <ListItem>
-            <TextField
-              variant="outlined"
-              fullWidth
-              id="password"
-              label="Password"
-              inputProps={{ type: "password" }}
-              onChange={(e) => setPassword(e.target.value)}
-            ></TextField>
+            <Controller
+              name="password"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: true,
+                minLength: 6,
+              }}
+              render={({ field }) => (
+                <TextField
+                  variant="outlined"
+                  fullWidth
+                  id="password"
+                  label="Password"
+                  inputProps={{ type: "password" }}
+                  // onChange={(e) => setPassword(e.target.value)}
+                  {...field}
+                  error={Boolean(errors.password)}
+                  helperText={
+                    errors.password
+                      ? errors.password.type === "minLength"
+                        ? "Password must be more than 5 characters"
+                        : "Password is required"
+                      : ""
+                  }
+                ></TextField>
+              )}
+            />
           </ListItem>
 
           <ListItem>
