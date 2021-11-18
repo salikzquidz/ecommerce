@@ -11,7 +11,7 @@ import {
   Card,
   Button,
 } from "@material-ui/core";
-import Layout from "../../components/layout";
+import Layout from "../../components/Layout";
 import useStyles from "../../utils/styles";
 
 import Product from "../../models/Product";
