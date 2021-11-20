@@ -4,12 +4,20 @@ import { createContext, useReducer } from "react";
 export const Store = createContext();
 
 const initialState = {
-  darkMode: Cookies.get("darkMode") === "ON" ? true : false, // to preserve dark/light mode when refresh the page
+  darkMode: Cookies.get("darkMode") === "ON" ? true : false,
   cart: {
-    // cartItems: [],
     cartItems: Cookies.get("cartItems")
       ? JSON.parse(Cookies.get("cartItems"))
       : [],
+    shippingAddress: Cookies.get("shippingAddress")
+      ? JSON.parse(Cookies.get("shippingAddress"))
+      : {},
+    // shippingAddress: Cookies.get('shippingAddress')
+    //   ? JSON.parse(Cookies.get('shippingAddress'))
+    //   : { location: {} },
+    // paymentMethod: Cookies.get('paymentMethod')
+    //   ? Cookies.get('paymentMethod')
+    //   : '',
   },
   userInfo: Cookies.get("userInfo")
     ? JSON.parse(Cookies.get("userInfo"))
@@ -48,6 +56,19 @@ function reducer(state, action) {
     case "USER_LOGOUT": {
       return { ...state, userInfo: null, cart: { cartItems: [] } };
     }
+    case "SAVE_SHIPPING_ADDRESS": {
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          shippingAddress: {
+            ...state.cart.shippingAddress,
+            ...action.payload,
+          },
+        },
+      };
+    }
+
     default:
       return state;
   }

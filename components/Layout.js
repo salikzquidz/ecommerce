@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -28,11 +28,11 @@ import Cookies from "js-cookie";
 // slug
 // need to wrap components inside Store.Provider (in _app.js)
 
-export default function Layout({ description, title, children }) {
-  const classes = useStyles();
+export default function Layout({ title, description, children }) {
   const router = useRouter();
   const { state, dispatch } = useContext(Store); // for dark mode
   const { darkMode, cart, userInfo } = state; // for dark mode | cart
+  const classes = useStyles();
   const theme = createTheme({
     typography: {
       h1: {
@@ -52,13 +52,13 @@ export default function Layout({ description, title, children }) {
     },
   });
 
-  function darkModeHandler() {
+  const darkModeChangeHandler = () => {
     dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
     const newDarkMode = !darkMode;
-    Cookies.set("darkMode", newDarkMode ? "ON" : "OFF"); // to preserve dark/light mode when refresh the page
-  }
+    Cookies.set("darkMode", newDarkMode ? "ON" : "OFF");
+  };
 
-  // FOR PROFILE BUTTON
+  // -> FOR PROFILE BUTTON
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -68,7 +68,7 @@ export default function Layout({ description, title, children }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  // FOR PROFILE BUTTON
+  // <- FOR PROFILE BUTTON
 
   //FOR LOGOUT
   const logoutClickHandler = () => {
@@ -80,6 +80,16 @@ export default function Layout({ description, title, children }) {
   };
   //FOR LOGOUT
 
+  useEffect(() => {
+    console.log(darkMode);
+    // darkMode = !darkMode;
+  }, [darkMode]);
+
+  const [cek, setCek] = useState(false);
+
+  // function cekHandler () {
+
+  // }
   return (
     <div>
       <Head>
@@ -97,7 +107,14 @@ export default function Layout({ description, title, children }) {
             </NextLink>
             <div className={classes.grow}></div>
             <div>
-              <Switch checked={darkMode} onChange={darkModeHandler}></Switch>
+              {/* <Switch checked={cek} onChange={() => setCek(!cek)}></Switch> */}
+
+              {/* {darkMode ? "ON" : "OFF"} */}
+              <Switch
+                checked={darkMode}
+                onChange={darkModeChangeHandler}
+              ></Switch>
+
               <NextLink href="/cart" passHref>
                 <Link>
                   {cart.cartItems.length > 0 ? (
