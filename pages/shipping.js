@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import CheckoutWizard from "../components/CheckoutWizard";
 import NextLink from "next/link";
 import Cookies from "js-cookie";
 import Layout from "../components/Layout";
@@ -67,6 +68,7 @@ export default function Shipping() {
 
   return (
     <Layout title="Shipping Address">
+      <CheckoutWizard activeStep={1} />
       <form
         action=""
         className={classes.loginForm}
