@@ -47,6 +47,11 @@ export default function payment() {
     router.push("/placeorder");
   };
 
+  // temporary solution for switch bug after refresh
+  useEffect(() => {
+    router.push(window.location.pathname);
+  }, []);
+
   return (
     <Layout title="Payment Method">
       {" "}

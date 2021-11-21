@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 // import { useRouter } from "next/router";
 import NextLink from "next/link";
 import Image from "next/image";
@@ -38,6 +38,11 @@ export default function ProductPage({ product }) {
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
     router.push("/cart");
   };
+
+  // temporary solution for switch bug after refresh
+  useEffect(() => {
+    router.push(window.location.pathname);
+  }, []);
 
   return (
     <Layout title={product.name} description={product.description}>

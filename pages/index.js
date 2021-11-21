@@ -3,7 +3,7 @@ import Image from "next/image";
 import NextLink from "next/link";
 import styles from "../styles/Home.module.css";
 import Layout from "../components/Layout";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import db from "../utils/db";
 import Product from "../models/Product";
 import { useRouter } from "next/router";
@@ -35,6 +35,11 @@ export default function Home({ products }) {
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
     router.push("/cart");
   };
+
+  // temporary solution for switch bug after refresh
+  useEffect(() => {
+    router.push("/");
+  }, []);
 
   return (
     <Layout>

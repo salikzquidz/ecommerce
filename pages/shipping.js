@@ -66,6 +66,11 @@ export default function Shipping() {
     router.push("/payment");
   };
 
+  // temporary solution for switch bug after refresh
+  useEffect(() => {
+    router.push(window.location.pathname);
+  }, []);
+
   return (
     <Layout title="Shipping Address">
       <CheckoutWizard activeStep={1} />
